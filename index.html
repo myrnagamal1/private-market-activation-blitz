@@ -1596,6 +1596,8 @@ function renderDashStats(rows) {
   }).length;
   document.getElementById('dash-ai-count').textContent = aiCount;
 
+  renderLeaderboard(lb);
+
   const maxLeads = lb.length > 0 ? Math.max(...lb.map(d => d.leads), 1) : 1;
   document.getElementById('dash-partner-bars').innerHTML = lb.length === 0
     ? '<p style="color:rgba(255,255,255,0.35);font-size:0.85rem;margin:0;">No leads yet.</p>'
