@@ -1070,14 +1070,6 @@
           <textarea id="lf-notes" class="lf-input" rows="3" placeholder="Key pain points, context…"></textarea>
         </div>
 
-        <!-- Salescreen -->
-        <div class="lf-group" style="margin-bottom:12px;">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);">
-            <input type="checkbox" id="lf-salescreen" style="width:18px;height:18px;accent-color:#00C8D4;cursor:pointer;flex-shrink:0;">
-            Salescreen
-          </label>
-        </div>
-
         <!-- Submit -->
         <button class="lf-submit" id="lf-btn" onclick="lfSubmit()">Submit Lead →</button>
         <div id="lf-status" style="margin-top:16px;font-size:14px;text-align:center;min-height:20px;"></div>
@@ -1695,7 +1687,6 @@ function lfSubmit() {
   const ai       = document.getElementById('lf-ai').value.trim();
   const notes      = document.getElementById('lf-notes').value.trim();
   const sde        = SDES.length > 0 ? document.getElementById('lf-sde').value.trim() : '';
-  const salescreen = document.getElementById('lf-salescreen').checked ? 'YES' : 'NO';
   const status   = document.getElementById('lf-status');
   const btn      = document.getElementById('lf-btn');
 
@@ -1730,7 +1721,7 @@ function lfSubmit() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ partner, rep, account, contact, title, phone, email, industry, outcome, nextstep, ai, notes, sde,
-      onMaster: onMaster ? 'YES' : 'NO — not on master list', salescreen })
+      onMaster: onMaster ? 'YES' : 'NO — not on master list' })
   })
     .then(r => r.json())
     .then(d => {
@@ -1741,7 +1732,6 @@ function lfSubmit() {
         document.getElementById('lf-outcome').value = '';
         document.getElementById('lf-industry').value = '';
         document.getElementById('lf-ai').value = '';
-        document.getElementById('lf-salescreen').checked = false;
         if (SDES.length > 0) document.getElementById('lf-sde').value = '';
         document.getElementById('lf-account-warn').style.display = 'none';
         document.getElementById('lf-account-ok').style.display   = 'none';
