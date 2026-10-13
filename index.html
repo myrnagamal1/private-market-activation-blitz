@@ -1829,13 +1829,14 @@ function renderLeadsTable(rows) {
     { key: 'title',     label: 'Title' },
     { key: 'phone',     label: 'Phone' },
     { key: 'email',     label: 'Email' },
-    { key: 'industry',  label: 'Industry' },
-    { key: 'outcome',   label: 'Solution' },
-    { key: 'ai',        label: 'AI?' },
-    { key: 'nextstep',  label: 'Next Step' },
-    { key: 'notes',     label: 'Notes' },
-    { key: 'sde',       label: 'SDE' },
-    { key: 'onMaster',  label: 'Master?' },
+    { key: 'industry',   label: 'Industry' },
+    { key: 'outcome',    label: 'Solution' },
+    { key: 'ai',         label: 'AI?' },
+    { key: 'nextstep',   label: 'Next Step' },
+    { key: 'notes',      label: 'Notes' },
+    { key: 'sde',        label: 'SDE' },
+    { key: 'salescreen', label: 'Salescreen' },
+    { key: 'onMaster',   label: 'Master?' },
   ];
 
   if (rows.length === 0) {
@@ -1883,13 +1884,14 @@ function downloadLeadsExcel() {
     { key: 'title',     label: 'Title' },
     { key: 'phone',     label: 'Phone' },
     { key: 'email',     label: 'Email' },
-    { key: 'industry',  label: 'Industry' },
-    { key: 'outcome',   label: 'Solution' },
-    { key: 'ai',        label: 'AI?' },
-    { key: 'nextstep',  label: 'Next Step' },
-    { key: 'notes',     label: 'Notes' },
-    { key: 'sde',       label: 'SDE' },
-    { key: 'onMaster',  label: 'Master?' },
+    { key: 'industry',   label: 'Industry' },
+    { key: 'outcome',    label: 'Solution' },
+    { key: 'ai',         label: 'AI?' },
+    { key: 'nextstep',   label: 'Next Step' },
+    { key: 'notes',      label: 'Notes' },
+    { key: 'sde',        label: 'SDE' },
+    { key: 'salescreen', label: 'Salescreen' },
+    { key: 'onMaster',   label: 'Master?' },
   ];
   const data = [COLS.map(c => c.label)].concat(
     dashAllRows.map((row, i) => {
