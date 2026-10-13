@@ -1557,7 +1557,23 @@ function toggleExclude(idx) {
   else dashExcluded.add(idx);
   sessionStorage.setItem('dashExcluded', JSON.stringify([...dashExcluded]));
   renderDashStats(dashAllRows);
-  renderLeadsTable(dashAllRows);
+  applyDashView();
+}
+
+async function deleteLead(globalIdx) {
+  if (!confirm('Permanently delete this lead?')) return;
+  try {
+    await fetch(WEB_APP_URL + '/leads/' + globalIdx, { method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: DASH_PASS }) });
+  } catch(e) {}
+  dashAllRows.splice(globalIdx, 1);
+  const newExcluded = new Set();
+  dashExcluded.forEach(i => { if (i < globalIdx) newExcluded.add(i); else if (i > globalIdx) newExcluded.add(i - 1); });
+  dashExcluded = newExcluded;
+  sessionStorage.setItem('dashExcluded', JSON.stringify([...dashExcluded]));
+  renderDashStats(dashAllRows);
+  applyDashView();
 }
 
 function renderDashStats(rows) {
@@ -1818,7 +1834,7 @@ function renderLeadsTable(rows) {
   }
   empty.style.display = 'none';
 
-  thead.innerHTML = '<tr><th title="Exclude from leaderboard">Excl.</th>' + COLS.map(c => `<th>${c.label}</th>`).join('') + '</tr>';
+  thead.innerHTML = '<tr><th title="Exclude from leaderboard">Excl.</th>' + COLS.map(c => `<th>${c.label}</th>`).join('') + '<th></th></tr>';
 
   tbody.innerHTML = rows.map((row, idx) => {
     const globalIdx = row._globalIdx !== undefined ? row._globalIdx : idx;
@@ -1839,12 +1855,14 @@ function renderLeadsTable(rows) {
       return `<td title="${escaped}">${escaped || '—'}</td>`;
     }).join('');
     const chk = `<td style="text-align:center;"><input type="checkbox" title="Exclude from leaderboard" ${excl ? 'checked' : ''} onchange="toggleExclude(${globalIdx})" style="cursor:pointer;accent-color:#f87171;width:15px;height:15px;"></td>`;
-    return `<tr style="${rowStyle}">${chk}${cells}</tr>`;
+    const del = `<td style="text-align:center;"><button onclick="deleteLead(${globalIdx})" title="Delete lead" style="background:none;border:none;cursor:pointer;color:#f87171;font-size:15px;padding:2px 6px;">✕</button></td>`;
+    return `<tr style="${rowStyle}">${chk}${cells}${del}</tr>`;
   }).join('');
 }
 
 function downloadLeadsExcel() {
   const COLS = [
+    { key: 'excluded',  label: 'Excluded' },
     { key: 'timestamp', label: 'Time' },
     { key: 'partner',   label: 'Partner' },
     { key: 'rep',       label: 'Rep' },
@@ -1861,9 +1879,11 @@ function downloadLeadsExcel() {
     { key: 'sde',       label: 'SDE' },
     { key: 'onMaster',  label: 'Master?' },
   ];
-  const included = dashAllRows.filter((_, i) => !dashExcluded.has(i));
   const data = [COLS.map(c => c.label)].concat(
-    included.map(row => COLS.map(c => row[c.key] !== undefined ? String(row[c.key]) : ''))
+    dashAllRows.map((row, i) => {
+      const withExcluded = { ...row, excluded: dashExcluded.has(i) ? 'Yes' : '' };
+      return COLS.map(c => withExcluded[c.key] !== undefined ? String(withExcluded[c.key]) : '');
+    })
   );
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
