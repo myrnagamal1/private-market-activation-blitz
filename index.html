@@ -1225,6 +1225,16 @@ const REFRESH_INTERVAL = 60000; // 60 seconds
 
   // Agenda grid
   const agendaIcons = ['⚡', '🏆', '🎯', '🔥', '💡', '🚀'];
+  const agendaSlots = [
+    { start: '09:00', end: '09:30', label: 'Breakfast' },
+    { start: '09:30', end: '09:45', label: 'Welcome Message Energy Focus & Go' },
+    { start: '09:45', end: '10:15', label: 'Best Practices' },
+    { start: '10:15', end: '10:30', label: 'T-Minus 0 – Blitz Kick Off and Room Assignments' },
+    { start: '10:30', end: '13:00', label: 'Sprint 1 – Live Outreach Begins' },
+    { start: '13:00', end: '14:00', label: 'Lunch Break' },
+    { start: '14:00', end: '15:45', label: 'Sprint 2 – Full Send' },
+    { start: '15:45', end: '16:00', label: 'The Big Reveal: Blitz Results, Wins & Winners' },
+  ];
   document.getElementById('agenda-grid').innerHTML = DAYS.map((d, i) => `
     <div class="agenda-day">
       <div class="agenda-day-header">
@@ -1235,21 +1245,14 @@ const REFRESH_INTERVAL = 60000; // 60 seconds
         </div>
       </div>
       <div class="agenda-items">
+        ${agendaSlots.map(s => `
         <div class="agenda-item">
-          <div class="agenda-time">09:00 – 13:00</div>
-          <div class="agenda-label">Morning Blitz Sprint</div>
-        </div>
-        <div class="agenda-item">
-          <div class="agenda-time">13:00 – 14:00</div>
-          <div class="agenda-label">Lunch Break</div>
-        </div>
-        <div class="agenda-item">
-          <div class="agenda-time">14:00 – 17:00</div>
-          <div class="agenda-label">Afternoon Blitz Sprint</div>
-        </div>
+          <div class="agenda-time">${s.start} – ${s.end}</div>
+          <div class="agenda-label">${s.label}</div>
+        </div>`).join('')}
         ${i === DAYS.length - 1 ? `
         <div class="agenda-item special">
-          <div class="agenda-time">17:00 – 18:00</div>
+          <div class="agenda-time">16:00</div>
           <div class="agenda-label">🥇 Announcing the Winners</div>
         </div>` : ''}
       </div>
