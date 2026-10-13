@@ -1560,6 +1560,18 @@ function toggleExclude(idx) {
   applyDashView();
 }
 
+async function toggleSalescreen(globalIdx, checkbox) {
+  const val = checkbox.checked ? 'YES' : 'NO';
+  dashAllRows[globalIdx].salescreen = val;
+  try {
+    await fetch('https://blitz-backend.cfapps.eu10-004.hana.ondemand.com/event/private-market-activation-blitz/leads/' + globalIdx, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ salescreen: val })
+    });
+  } catch(e) {}
+}
+
 async function deleteLead(globalIdx) {
   if (!confirm('Permanently delete this lead?')) return;
   try {
@@ -1825,7 +1837,6 @@ function renderLeadsTable(rows) {
     { key: 'nextstep',   label: 'Next Step' },
     { key: 'notes',      label: 'Notes' },
     { key: 'sde',        label: 'SDE' },
-    { key: 'salescreen', label: 'Salescreen' },
     { key: 'onMaster',   label: 'Master?' },
   ];
 
@@ -1837,7 +1848,7 @@ function renderLeadsTable(rows) {
   }
   empty.style.display = 'none';
 
-  thead.innerHTML = '<tr><th title="Exclude from leaderboard">Excl.</th>' + COLS.map(c => `<th>${c.label}</th>`).join('') + '<th></th></tr>';
+  thead.innerHTML = '<tr><th title="Exclude from leaderboard">Excl.</th>' + COLS.map(c => `<th>${c.label}</th>`).join('') + '<th>Salescreen</th><th></th></tr>';
 
   tbody.innerHTML = rows.map((row, idx) => {
     const globalIdx = row._globalIdx !== undefined ? row._globalIdx : idx;
@@ -1858,8 +1869,10 @@ function renderLeadsTable(rows) {
       return `<td title="${escaped}">${escaped || '—'}</td>`;
     }).join('');
     const chk = `<td style="text-align:center;"><input type="checkbox" title="Exclude from leaderboard" ${excl ? 'checked' : ''} onchange="toggleExclude(${globalIdx})" style="cursor:pointer;accent-color:#f87171;width:15px;height:15px;"></td>`;
+    const salescreenChecked = row.salescreen === 'YES';
+    const salescreenCell = `<td style="text-align:center;"><input type="checkbox" title="Salescreen" ${salescreenChecked ? 'checked' : ''} onchange="toggleSalescreen(${globalIdx}, this)" style="cursor:pointer;accent-color:#00C8D4;width:15px;height:15px;"></td>`;
     const del = `<td style="text-align:center;"><button onclick="deleteLead(${globalIdx})" title="Delete lead" style="background:none;border:none;cursor:pointer;color:#f87171;font-size:15px;padding:2px 6px;">✕</button></td>`;
-    return `<tr style="${rowStyle}">${chk}${cells}${del}</tr>`;
+    return `<tr style="${rowStyle}">${chk}${cells}${salescreenCell}${del}</tr>`;
   }).join('');
 }
 
@@ -1880,7 +1893,6 @@ function downloadLeadsExcel() {
     { key: 'nextstep',   label: 'Next Step' },
     { key: 'notes',      label: 'Notes' },
     { key: 'sde',        label: 'SDE' },
-    { key: 'salescreen', label: 'Salescreen' },
     { key: 'onMaster',   label: 'Master?' },
   ];
   const data = [COLS.map(c => c.label)].concat(
